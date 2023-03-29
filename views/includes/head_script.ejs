@@ -1,0 +1,172 @@
+<script>
+    (function(){
+
+        //function that get the username from the input
+        var getUsername  = function(){
+            var user = document.getElementById("inputUsername").value;
+            return user.trim().toLowerCase();
+        }
+
+        //function that check the status of the response
+        var check = function(response) {
+            if (response.status >= 200 && response.status < 300) {
+                return Promise.resolve(response)
+            } else if(response.status === 404) {
+                document.querySelector("#warn").innerHTML = "User not exist.";
+                document.getElementById("warn").style.display = "block";
+            } else {
+                return Promise.reject(new Error(response.statusText))
+            }
+        }
+
+        //function that search the username in github
+        var getData = function() {
+            var user = getUsername();
+            if(user === "")
+                return;
+            document.getElementById("warn").style.display = "none";
+            document.querySelector("#repositories_ol").innerHTML = "";
+            document.querySelector("#followers_ol").innerHTML = "";
+            //search user
+            fetch("https://api.github.com/users/"+user)
+                .then(check)
+                .then(function(response){
+                    response.json().then(function(data) {
+                        document.querySelector("#user_info").innerHTML = data.login;
+                        if(data.public_repos !== 0) {
+                            //search repositories
+                            fetch(data.repos_url)
+                                .then(check)
+                                .then(function (response) {
+                                    response.json().then(function(data) {
+                                        for(i of data){
+                                            document.querySelector("#repositories_ol").innerHTML += "<li><a href='" + i.html_url + "' target='_blank'>" + i.full_name + "</a></li>";
+                                        }
+                                    })
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                        }else{
+                            document.querySelector("#repositories_ol").innerHTML = "no repositories.";
+                        }
+                        if(data.followers !== 0) {
+                            //search followers
+                            fetch(data.followers_url)
+                                .then(check)
+                                .then(function (response) {
+                                    response.json().then(function(data) {
+                                        for(i of data){
+                                            document.querySelector("#followers_ol").innerHTML += "<li><a href='" + i.html_url + "' target='_blank'>" + i.login + "</a></li>";
+                                        }
+                                    })
+                                })
+                                .catch(function (err) {
+                                    console.log(err);
+                                });
+                        }else{
+                            document.querySelector("#followers_ol").innerHTML = "no followers.";
+                        }
+                    });
+                    document.getElementById("userDataCard").style.display = "block";
+                }).catch(function (err) {
+                console.log(err);
+            });
+        }
+
+        //function that save the username in the saved list by call to server
+        var save = function(username){
+            document.getElementById("warn").style.display = "none";
+            var user = getUsername();
+            if(user === "")
+                return;
+            //call to server
+            fetch("save?username="+user)
+                .then(check)
+                .then(function (response) {
+                    response.json().then(function (data) {
+                        if(data.status === "ok"){
+                            document.querySelector("#saved_ol").innerHTML += data.details;
+                            document.querySelector("#warn").innerHTML = user + " saved.";
+                        } else if(data.status === "github"){
+                            document.querySelector("#warn").innerHTML = user + " not exist in github.";
+                        } else if(data.status === "exist") {
+                            document.querySelector("#warn").innerHTML = user + " already saved.";
+                        } else {
+                            console.log(data.details)
+                            return;
+                        }
+                        document.getElementById("warn").style.display = "block";
+                    })
+                }).catch(function (err) {
+                console.log(err);
+            });
+        }
+
+        //function that delete username from saved list by call to server
+        var del = function(username){
+            document.getElementById("warn").style.display = "none";
+            var user = getUsername();
+            if(user === "")
+                return;
+            //call to server
+            fetch("delete?username="+user)
+                .then(check)
+                .then(function (response) {
+                    response.json().then(function (data) {
+                        if(data.status === "ok"){
+                            document.getElementById(user).remove();
+                            document.querySelector("#warn").innerHTML = user + " deleted.";
+                        }else{
+                            document.querySelector("#warn").innerHTML = user + " not exist in saved list.";
+                        }
+                        document.getElementById("warn").style.display = "block";
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }).catch(function (err) {
+                console.log(err);
+            });
+        }
+
+        //function that load the list to DOM
+        var load = function(username){
+            //call to server
+            fetch("load")
+                .then(check)
+                .then(function (response) {
+                    response.json().then(function (data) {
+                        if(data.status === "ok"){
+                            document.querySelector("#saved_ol").innerHTML += data.list;
+                        }
+                    }).catch(err => {
+                        console.log(err);
+                    })
+                }).catch(function (err) {
+                console.log(err);
+            });
+        }
+
+        //add listeners to buttons and load the list
+        window.addEventListener('DOMContentLoaded', function () {
+            document.getElementById("search_btn").addEventListener('click', function(){getData();});
+            document.getElementById("delete_btn").addEventListener('click', function(){del();});
+            document.getElementById("save_btn").addEventListener('click', function(){save();});
+            load();
+        });
+
+    })();
+</script>
+<style>
+    body{
+        margin: 10px;
+    }
+    .btn{
+        margin: 13px;
+    }
+    .alert{
+        margin: 5px;
+    }
+</style>
+<title>GitHub Search</title>
+</head>

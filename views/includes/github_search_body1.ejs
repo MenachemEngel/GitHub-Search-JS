@@ -1,0 +1,43 @@
+<body>
+<div class="container">
+    <div class="row">
+        <h1 class="col-9">GitHub Search</h1>
+        <div class="col-3">
+            Login as <%= message %>
+            <form action="logout" method="get">
+                <button type="submit" class="btn btn-secondary">Logout</button>
+            </form>
+        </div>
+    </div>
+    <div id="search">
+        <div class="row">
+            <input type="text" class="col-12" id="inputUsername" placeholder="Search Github Username.">
+        </div>
+        <div class="row">
+            <button type="button" id="search_btn" class="col-12 col-md-3 btn btn-primary">Search</button>
+            <button type="submit" id="save_btn" class="col-12 col-md-3 btn btn-success">Save</button>
+            <button type="submit" id="delete_btn" class="col-12 col-md-3 btn btn-danger">Delete</button>
+        </div>
+    </div>
+    <div id="warn" class="row alert alert-warning" style="display: none"></div>
+    <div class="row">
+        <div class="card-deck col-12">
+            <div id="userDataCard" class="card col-12 col-md-6" style="display: none">
+                <div id="user_info" class="alert alert-info"></div>
+                <div class="card-body">
+                    <h5 class="card-title">Repositories</h5>
+                    <ol id="repositories_ol">
+
+                    </ol>
+                </div>
+                <div class="card-body">
+                    <h5 class="card-title">Followers</h5>
+                    <ol id="followers_ol">
+
+                    </ol>
+                </div>
+            </div>
+            <div class="card col-12 col-md-6">
+                <div class="alert alert-info">Saved:</div>
+                <div class="card-body">
+                    <ol id="saved_ol">

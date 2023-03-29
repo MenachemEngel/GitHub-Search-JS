@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<%- include ./includes/head_start.ejs %>
+<!-- check the flag -->
+<% if(myFlag===1){ %>
+  <%- include ./includes/head_script.ejs %>
+    <%- include ./includes/github_search_body1.ejs %>
+    <%- include ./includes/github_search_body2.ejs %>
+<%} else if(myFlag===2){ %>
+  <%- include ./includes/head_login.ejs %>
+    <%- include ./includes/login.ejs %>
+<%}%>
+</html>

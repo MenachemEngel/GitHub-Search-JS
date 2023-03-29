@@ -1,0 +1,52 @@
+<body>
+<div class="row">
+    <div class="col-4"></div>
+    <div class="col-4">
+        <!-- Error message -->
+        <div id="form_warn" class="row alert alert-warning" style="margin-top:15px; display: <% if(message !== ""){%> block
+        <% }else{ %> none <% } %>"> <%= message %> </div>
+
+        <!-- Default form register -->
+        <form id="form1" class="text-center border border-light p-5" action="register" method="post" style="display: none">
+
+            <p class="h4 mb-4">Register</p>
+
+            <!-- Username -->
+            <input type="username" id="defaultRegisterFormEmail" class="form-control mb-4" placeholder="Usernane" name="username">
+
+            <!-- Password -->
+            <input type="password" id="defaultRegisterFormPassword" class="form-control" placeholder="Password" name="password" aria-describedby="defaultRegisterFormPasswordHelpBlock">
+
+            <!-- Sign up button -->
+            <input class="btn btn-info my-4 btn-block" type="submit" value="Register">
+
+            <!-- Already Registered -->
+            <p>Already Registered?
+                <span id="log">Login</span>
+            </p>
+
+        </form>
+
+        <!-- Default form login -->
+        <form id="form2" class="text-center border border-light p-5" action="login" method="post">
+
+            <p class="h4 mb-4">Login</p>
+
+            <!-- Username -->
+            <input type="username" id="defaultLoginFormEmail" class="form-control mb-4" placeholder="Username" name="username">
+
+            <!-- Password -->
+            <input type="password" id="defaultLoginFormPassword" class="form-control mb-4" placeholder="Password" name="password">
+
+            <!-- Sign in button -->
+            <input class="btn btn-info btn-block my-4" type="submit" value="Login">
+
+            <!-- Register -->
+            <p>Not a member?
+                <span id="reg">Register</span>
+            </p>
+
+        </form>
+    </div>
+</div>
+</body>
